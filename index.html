@@ -21,68 +21,74 @@
             -moz-appearance: textfield;
         }
 
-        /* Ensure smooth rendering in iframes */
+        /* Ensure completely transparent background for embedding */
         body {
-            background-color: transparent;
+            background-color: transparent !important;
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen m-0 font-sans antialiased text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-900 transition-colors duration-300">
+<body class="flex items-center justify-center min-h-screen m-0 font-sans antialiased text-gray-800 dark:text-gray-100 transition-colors duration-300">
 
-    <div class="flex flex-col items-center justify-center w-full max-w-md p-6 sm:p-8 rounded-3xl">
-        
-        <!-- Status Indicator -->
-        <div id="mode-display" class="text-sm font-bold tracking-widest uppercase mb-4 text-gray-900 dark:text-gray-100 transition-colors">
-            Focus
-        </div>
+    <div class="flex flex-col items-center justify-center w-full max-w-sm p-4">
 
-        <!-- Radial Timer -->
-        <div class="relative flex items-center justify-center w-48 h-48 sm:w-56 sm:h-56 mb-8">
+        <!-- Radial Timer & Inner Content -->
+        <div class="relative flex items-center justify-center w-56 h-56 sm:w-64 sm:h-64 mb-3">
+            
+            <!-- SVG Ring -->
             <svg class="absolute inset-0 w-full h-full" style="transform: rotate(-90deg) scaleX(-1);" viewBox="0 0 200 200">
                 <!-- Background track -->
-                <circle cx="100" cy="100" r="90" stroke="currentColor" stroke-width="8" fill="none" class="text-gray-200 dark:text-gray-700" />
+                <circle cx="100" cy="100" r="92" stroke="currentColor" stroke-width="4" fill="none" class="text-gray-200 dark:text-gray-700/50" />
                 <!-- Progress wipe -->
-                <circle id="progress-circle" cx="100" cy="100" r="90" stroke="currentColor" stroke-width="8" fill="none" stroke-linecap="round" class="text-gray-900 dark:text-gray-100" />
+                <circle id="progress-circle" cx="100" cy="100" r="92" stroke="currentColor" stroke-width="5" fill="none" stroke-linecap="round" class="text-gray-900 dark:text-gray-100" />
             </svg>
-            <!-- Time Display -->
-            <div id="time-display" class="relative text-5xl sm:text-6xl font-light tabular-nums">
-                90:00
+            
+            <!-- Inner Content -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pt-2">
+                <!-- Status Indicator -->
+                <div id="mode-display" class="text-xs font-bold tracking-widest uppercase mb-1 text-gray-500 dark:text-gray-400 transition-colors pointer-events-auto">
+                    Focus
+                </div>
+
+                <!-- Time Display -->
+                <div id="time-display" class="text-4xl sm:text-5xl font-light tabular-nums text-gray-900 dark:text-gray-100 mb-3 pointer-events-auto">
+                    90:00
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center justify-center gap-3 pointer-events-auto">
+                    <button id="play-pause-btn" class="flex items-center justify-center w-10 h-10 bg-gray-900 hover:bg-gray-700 dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 rounded-full shadow-lg transition-transform active:scale-95 focus:outline-none">
+                        <!-- Play Icon (Default) -->
+                        <svg id="icon-play" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <!-- Pause Icon (Hidden initially) -->
+                        <svg id="icon-pause" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                        </svg>
+                    </button>
+
+                    <button id="stop-btn" class="flex items-center justify-center w-8 h-8 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full shadow transition-transform active:scale-95 focus:outline-none">
+                        <!-- Stop Icon -->
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6 6h12v12H6z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Controls -->
-        <div class="flex items-center gap-4 mb-8">
-            <button id="play-pause-btn" class="flex items-center justify-center w-14 h-14 bg-gray-900 hover:bg-gray-700 dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 rounded-full shadow-lg transition-transform active:scale-95 focus:outline-none">
-                <!-- Play Icon (Default) -->
-                <svg id="icon-play" class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                </svg>
-                <!-- Pause Icon (Hidden initially) -->
-                <svg id="icon-pause" class="w-6 h-6 hidden" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                </svg>
-            </button>
-
-            <button id="stop-btn" class="flex items-center justify-center w-12 h-12 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full shadow transition-transform active:scale-95 focus:outline-none">
-                <!-- Stop Icon -->
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 6h12v12H6z" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- Settings -->
-        <div class="flex items-center justify-center gap-6 w-full px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-2xl">
-            <div class="flex flex-col items-center">
-                <label for="work-input" class="text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">Work (min)</label>
-                <input id="work-input" type="number" value="90" min="1" max="999" class="w-16 text-center bg-transparent border-b-2 border-gray-300 dark:border-gray-600 focus:border-gray-900 dark:focus:border-gray-100 outline-none text-lg font-semibold transition-colors">
+        <!-- Settings (Shrunken & Compact) -->
+        <div class="flex items-center justify-center gap-4 w-full opacity-60 hover:opacity-100 transition-opacity">
+            <div class="flex items-center gap-1.5">
+                <label for="work-input" class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold">Work</label>
+                <input id="work-input" type="number" value="90" min="1" max="999" class="w-8 text-center bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-gray-900 dark:focus:border-gray-100 outline-none text-sm font-semibold transition-colors">
             </div>
             
-            <div class="w-px h-8 bg-gray-300 dark:bg-gray-600"></div>
+            <div class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600"></div>
 
-            <div class="flex flex-col items-center">
-                <label for="break-input" class="text-xs text-gray-500 dark:text-gray-400 mb-1 font-medium">Break (min)</label>
-                <input id="break-input" type="number" value="10" min="1" max="999" class="w-16 text-center bg-transparent border-b-2 border-gray-300 dark:border-gray-600 focus:border-gray-500 dark:focus:border-gray-400 outline-none text-lg font-semibold transition-colors">
+            <div class="flex items-center gap-1.5">
+                <label for="break-input" class="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-semibold">Break</label>
+                <input id="break-input" type="number" value="10" min="1" max="999" class="w-8 text-center bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-gray-500 dark:focus:border-gray-400 outline-none text-sm font-semibold transition-colors">
             </div>
         </div>
 
@@ -101,7 +107,7 @@
         const breakInput = document.getElementById('break-input');
 
         // SVG Circle Setup
-        const radius = 90;
+        const radius = 92;
         const circumference = 2 * Math.PI * radius;
         progressCircle.style.strokeDasharray = circumference;
         progressCircle.style.strokeDashoffset = 0;
@@ -128,30 +134,37 @@
             const totalDuration = isWorkMode ? workDuration : breakDuration;
             
             // Calculate progress offset
-            // When timeLeft == totalDuration, offset is 0 (full circle)
-            // When timeLeft == 0, offset is circumference (empty circle)
             const progress = (timeLeft / totalDuration);
             const offset = circumference - (progress * circumference);
             
             progressCircle.style.strokeDashoffset = offset;
         }
 
+        // Updates the text to say Focus/Working/Break depending on state
+        function updateModeText() {
+            if (isWorkMode) {
+                modeDisplay.textContent = isRunning ? "Working" : "Focus";
+                modeDisplay.className = "text-xs font-bold tracking-widest uppercase mb-1 text-gray-900 dark:text-gray-100 transition-colors pointer-events-auto";
+                progressCircle.className.baseVal = "text-gray-900 dark:text-gray-100";
+                playPauseBtn.className = "flex items-center justify-center w-10 h-10 bg-gray-900 hover:bg-gray-700 dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 rounded-full shadow-lg transition-transform active:scale-95 focus:outline-none";
+            } else {
+                modeDisplay.textContent = isRunning ? "Resting" : "Break";
+                modeDisplay.className = "text-xs font-bold tracking-widest uppercase mb-1 text-gray-500 dark:text-gray-400 transition-colors pointer-events-auto";
+                progressCircle.className.baseVal = "text-gray-500 dark:text-gray-400";
+                playPauseBtn.className = "flex items-center justify-center w-10 h-10 bg-gray-500 hover:bg-gray-600 dark:bg-gray-400 dark:hover:bg-gray-300 text-white dark:text-gray-900 rounded-full shadow-lg transition-transform active:scale-95 focus:outline-none";
+            }
+            
+            // Revert back to softer gray if completely stopped/idle in focus mode
+            if (isWorkMode && !isRunning && timeLeft === workDuration) {
+                 modeDisplay.className = "text-xs font-bold tracking-widest uppercase mb-1 text-gray-500 dark:text-gray-400 transition-colors pointer-events-auto";
+            }
+        }
+
         // Switches between Work and Break modes
         function switchMode() {
             isWorkMode = !isWorkMode;
             timeLeft = isWorkMode ? workDuration : breakDuration;
-            
-            if (isWorkMode) {
-                modeDisplay.textContent = "Focus";
-                modeDisplay.className = "text-sm font-bold tracking-widest uppercase mb-4 text-gray-900 dark:text-gray-100 transition-colors";
-                progressCircle.className.baseVal = "text-gray-900 dark:text-gray-100";
-                playPauseBtn.className = "flex items-center justify-center w-14 h-14 bg-gray-900 hover:bg-gray-700 dark:bg-gray-100 dark:hover:bg-white text-white dark:text-gray-900 rounded-full shadow-lg transition-transform active:scale-95 focus:outline-none";
-            } else {
-                modeDisplay.textContent = "Break";
-                modeDisplay.className = "text-sm font-bold tracking-widest uppercase mb-4 text-gray-500 dark:text-gray-400 transition-colors";
-                progressCircle.className.baseVal = "text-gray-500 dark:text-gray-400";
-                playPauseBtn.className = "flex items-center justify-center w-14 h-14 bg-gray-500 hover:bg-gray-600 dark:bg-gray-400 dark:hover:bg-gray-300 text-white dark:text-gray-900 rounded-full shadow-lg transition-transform active:scale-95 focus:outline-none";
-            }
+            updateModeText();
             updateDisplay();
         }
 
@@ -177,6 +190,7 @@
                 iconPause.classList.remove('hidden');
             }
             isRunning = !isRunning;
+            updateModeText();
         }
 
         // Stop Logic
@@ -188,6 +202,8 @@
             
             // Reset to current mode's full time
             timeLeft = isWorkMode ? workDuration : breakDuration;
+            
+            updateModeText();
             
             // Remove CSS transition temporarily to prevent wiping backward animation on reset
             progressCircle.style.transition = 'none';
@@ -220,6 +236,7 @@
         breakInput.addEventListener('change', updateDurations);
 
         // Initialize display
+        updateModeText();
         updateDisplay();
 
     </script>
