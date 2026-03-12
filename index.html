@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compact Pomodoro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configure Tailwind to use class-based dark mode
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <style>
         /* Smooth, linear transition for the radial wipe */
         #progress-circle {
@@ -20,14 +26,21 @@
         input[type="number"] {
             -moz-appearance: textfield;
         }
-
-        /* Ensure completely transparent background for embedding */
-        body {
-            background-color: transparent !important;
-        }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen m-0 font-sans antialiased text-gray-800 dark:text-gray-100 transition-colors duration-300">
+<body class="flex items-center justify-center min-h-screen m-0 font-sans antialiased text-gray-800 bg-white dark:bg-[#191919] dark:text-gray-100 transition-colors duration-300 relative">
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors focus:outline-none">
+        <!-- Moon Icon (for Dark Mode trigger) -->
+        <svg id="icon-moon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+        </svg>
+        <!-- Sun Icon (for Light Mode trigger) -->
+        <svg id="icon-sun" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 2.32a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-2.32 4.22a1 1 0 010 1.415l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-2.32a1 1 0 01-1.415 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zm2.32-4.22a1 1 0 010-1.415l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414 0zM10 6a4 4 0 100 8 4 4 0 000-8z" clip-rule="evenodd"></path>
+        </svg>
+    </button>
 
     <div class="flex flex-col items-center justify-center w-full max-w-sm p-4">
 
@@ -67,7 +80,7 @@
                         </svg>
                     </button>
 
-                    <button id="stop-btn" class="flex items-center justify-center w-8 h-8 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full shadow transition-transform active:scale-95 focus:outline-none">
+                    <button id="stop-btn" class="flex items-center justify-center w-8 h-8 bg-gray-200 hover:bg-gray-300 dark:bg-[#2A2A2A] dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full shadow transition-transform active:scale-95 focus:outline-none">
                         <!-- Stop Icon -->
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M6 6h12v12H6z" />
@@ -95,6 +108,38 @@
     </div>
 
     <script>
+        // Theme Toggle Logic
+        const htmlElement = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const iconMoon = document.getElementById('icon-moon');
+        const iconSun = document.getElementById('icon-sun');
+
+        // Set Default Theme (Prefer dark since Notion is usually dark)
+        if (!localStorage.getItem('theme')) {
+            localStorage.setItem('theme', 'dark');
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            htmlElement.classList.add('dark');
+            iconSun.classList.remove('hidden');
+        } else {
+            htmlElement.classList.remove('dark');
+            iconMoon.classList.remove('hidden');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+                iconMoon.classList.add('hidden');
+                iconSun.classList.remove('hidden');
+            } else {
+                localStorage.setItem('theme', 'light');
+                iconSun.classList.add('hidden');
+                iconMoon.classList.remove('hidden');
+            }
+        });
+
         // DOM Elements
         const timeDisplay = document.getElementById('time-display');
         const modeDisplay = document.getElementById('mode-display');
